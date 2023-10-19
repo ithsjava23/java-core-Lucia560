@@ -1,8 +1,12 @@
 package org.example.warehouse;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Category {
+
     private  String name;
 
     private Category(String name) {
@@ -22,11 +26,6 @@ public class Category {
         this.name = name;
     }
     public static Category of(String name) {
-        if (name == null){
-            throw new IllegalArgumentException("Category name can't be null");}
-        if (!name.isEmpty() && Character.isLowerCase(name.charAt(0))) {
-            name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
-        }
         return new Category(name);
     }
 
@@ -34,11 +33,7 @@ public class Category {
             return this.name.equals(newCategory.getName());
         }
 
-   /* public void checkFirstLetter() {
-        if (!name.isEmpty() && Character.isLowerCase(name.charAt(0))) {
-            name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
-        }
-    }*/
+
 
 
     @Override

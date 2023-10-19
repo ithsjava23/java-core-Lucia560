@@ -36,7 +36,6 @@ public record ProductRecord(UUID uuid,String productName, Category category,BigD
         return price;
     }
 
-
     @Override
     public String toString() {
         return "ProductRecord{" +
@@ -48,7 +47,13 @@ public record ProductRecord(UUID uuid,String productName, Category category,BigD
     }
 
 
+    public Object getCategory() {
+        return category;
+    }
 
+    public BigDecimal setPrice(BigDecimal newPrice) {
+        return newPrice;
+    }
 }
 
 
