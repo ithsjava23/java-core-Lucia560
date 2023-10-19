@@ -13,7 +13,7 @@ public class Warehouse {
     private String warehouseName;
     private  List<ProductRecord> productRecordList ;
 
-    private  List<ProductRecord> changedProductList ;
+   /* private  List<ProductRecord> changedProductList ;*/
 
     private static Warehouse instance;
 
