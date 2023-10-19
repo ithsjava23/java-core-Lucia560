@@ -7,11 +7,12 @@ import java.util.stream.Stream;
 
 public class Category {
     private String name;
-    List<Category> categoryList = new ArrayList<>();
+
     private Category(String name) {
         this.name= name;
 
-    }public String getName() {
+    }
+    public String getName() {
         return name;
     }
     public void setName(String name) {
@@ -20,9 +21,11 @@ public class Category {
     public static Category of(String s) {
         return new Category(s);
     }
+
     public boolean sameName(Category newCategory) {
-        return categoryList.stream().anyMatch( category-> category.getName().equals(newCategory.getName()));
-    }
+            return this.name.equals(newCategory.getName());
+        }
+
     public void checkFirstLetter() {
         if (!name.isEmpty() && Character.isLowerCase(name.charAt(0))) {
             name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
@@ -31,5 +34,18 @@ public class Category {
     public void nullName(String s) {
         if (s == null)
             throw new IllegalArgumentException("Category name can't be null");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return Objects.equals(name, category.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

@@ -3,12 +3,9 @@ package org.example;
 import org.example.warehouse.Category;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public record ProductRecord(UUID uuid,String productName, Category category,BigDecimal price) {
-
 
     public ProductRecord(UUID uuid,String productName, Category category,BigDecimal price){
         this.productName = productName;
@@ -40,8 +37,19 @@ public record ProductRecord(UUID uuid,String productName, Category category,BigD
     }
 
 
-}
+    @Override
+    public String toString() {
+        return "ProductRecord{" +
+                "uuid=" + uuid +
+                ", productName='" + productName + '\'' +
+                ", category=" + category +
+                ", price=" + price +
+                '}';
+    }
 
+
+
+}
 
 
 
