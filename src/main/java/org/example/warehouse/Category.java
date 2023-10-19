@@ -1,14 +1,16 @@
 package org.example.warehouse;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 public class Category {
-    private String name;
+    private  String name;
 
     private Category(String name) {
+        if (name == null){
+            throw new IllegalArgumentException("Category name can't be null");}
+        if (!name.isEmpty() && Character.isLowerCase(name.charAt(0))) {
+            name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+        }
         this.name= name;
 
     }
@@ -16,25 +18,28 @@ public class Category {
         return name;
     }
     public void setName(String name) {
+
         this.name = name;
     }
-    public static Category of(String s) {
-        return new Category(s);
+    public static Category of(String name) {
+        if (name == null){
+            throw new IllegalArgumentException("Category name can't be null");}
+        if (!name.isEmpty() && Character.isLowerCase(name.charAt(0))) {
+            name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+        }
+        return new Category(name);
     }
 
     public boolean sameName(Category newCategory) {
             return this.name.equals(newCategory.getName());
         }
 
-    public void checkFirstLetter() {
+   /* public void checkFirstLetter() {
         if (!name.isEmpty() && Character.isLowerCase(name.charAt(0))) {
             name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
         }
-    }
-    public void nullName(String s) {
-        if (s == null)
-            throw new IllegalArgumentException("Category name can't be null");
-    }
+    }*/
+
 
     @Override
     public boolean equals(Object o) {
