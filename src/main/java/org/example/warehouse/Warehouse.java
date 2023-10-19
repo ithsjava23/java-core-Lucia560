@@ -80,7 +80,7 @@ public class Warehouse {
         }
 
         ProductRecord productRecord = new ProductRecord(uuid, productName, category, price);
-        if(productRecordList.stream().anyMatch(p->p.uuid().equals(productRecord.uuid()))) {
+        if (productRecordList.stream().anyMatch(p -> p.uuid().equals(productRecord.uuid()))) {
             throw new IllegalArgumentException("Product with this ID  already exists");
         }
 
@@ -94,7 +94,8 @@ public class Warehouse {
                 .filter(product -> product.uuid().equals(id))
                 .collect(Collectors.toList());
     }
-   // correct
+
+    // correct
     public List<ProductRecord> getProducts() {
         return productRecordList;
     }
@@ -124,6 +125,7 @@ public class Warehouse {
         }
         throw new IllegalArgumentException("Product with that UUID not found.");
     }
+
     public List<ProductRecord> productAfterChange() {
         UUID productId = changedProductList.get(1).uuid();
         BigDecimal newPrice = BigDecimal.valueOf(311, 2);
@@ -142,6 +144,7 @@ public class Warehouse {
             throw new RuntimeException("There are not enough changed products to test.");
         }
     }
+
     public List<ProductRecord> getChangedProducts() {
         return changedProductList;
     }
@@ -155,4 +158,3 @@ public class Warehouse {
 
 
 }
-
