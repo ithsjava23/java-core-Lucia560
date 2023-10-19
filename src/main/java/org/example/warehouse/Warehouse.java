@@ -3,10 +3,7 @@ package org.example.warehouse;
 import org.example.ProductRecord;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Warehouse {
@@ -29,12 +26,7 @@ public class Warehouse {
 
     }
 
-    // getter and setters
-
-    public List<ProductRecord> getProductRecordList() {
-        return productRecordList;
-    }
-
+    // getter and setter
     public String getWarehouseName() {
         return warehouseName;
     }
@@ -47,7 +39,7 @@ public class Warehouse {
     public static Warehouse getInstance() {
         if (instance == null)
             instance = new Warehouse();
-        return new Warehouse();
+        return instance;
     }
 
     public static Warehouse getInstance(String warehouseName) {
@@ -88,6 +80,9 @@ public class Warehouse {
         }
 
         ProductRecord productRecord = new ProductRecord(uuid, productName, category, price);
+        if(productRecordList.stream().anyMatch(p->p.uuid().equals(productRecord.uuid()))) {
+            throw new IllegalArgumentException("Product with this ID  already exists");
+        }
 
         productRecordList.add(productRecord);
 
@@ -99,7 +94,7 @@ public class Warehouse {
                 .filter(product -> product.uuid().equals(id))
                 .collect(Collectors.toList());
     }
-
+   // correct
     public List<ProductRecord> getProducts() {
         return productRecordList;
     }
@@ -116,18 +111,20 @@ public class Warehouse {
                 .collect(Collectors.toList());
     }
 
+
     public void updateProductPrice(UUID productId, BigDecimal newPrice) {
-            for (ProductRecord product : productRecordList) {
-                if (product.uuid().equals(productId)) {
-                    product.setPrice(newPrice); // Update the price of the existing product
-                    return;
-                }
+        for (ProductRecord product : productRecordList) {
+            if (product.uuid().equals(productId)) {
+                ProductRecord updatedProduct = new ProductRecord(productId, product.productName(), product.category(), newPrice);
+                changedProductList.add(updatedProduct);
+                productRecordList.remove(product);
+                productRecordList.add(updatedProduct);
+                return;
             }
-            throw new IllegalArgumentException("Product with that UUID not found.");
         }
-
-
-        public void productAfterChange() {
+        throw new IllegalArgumentException("Product with that UUID not found.");
+    }
+    public List<ProductRecord> productAfterChange() {
         UUID productId = changedProductList.get(1).uuid();
         BigDecimal newPrice = BigDecimal.valueOf(311, 2);
         updateProductPrice(productId, newPrice);
@@ -138,17 +135,24 @@ public class Warehouse {
         }
 
         ProductRecord updatedProduct = updatedProducts.get(0);
+
         if (!updatedProduct.price().equals(newPrice)) {
             throw new RuntimeException("Product price was not updated as expected.");
         } else {
             throw new RuntimeException("There are not enough changed products to test.");
         }
-
-
-
-
-    public getChangedProducts() {
-        }
     }
+    public List<ProductRecord> getChangedProducts() {
+        return changedProductList;
+    }
+
+    public Map<Category, List<ProductRecord>> getProductsGroupedByCategories() {
+        return productRecordList.stream()
+                .collect(Collectors.groupingBy(ProductRecord::category));
+    }
+
+
+
+
 }
 
