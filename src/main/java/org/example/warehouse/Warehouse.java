@@ -9,17 +9,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Warehouse {
-    //fields for warehouse, name, list of products to contain into
+
     private String warehouseName;
     private  List<ProductRecord> productRecordList ;
-    //This I will need later
+
     private  List<ProductRecord> changedProductList ;
-    // I am guessing
+
     private static Warehouse instance;
 
     // private constructor
     private Warehouse(){}
-    private Warehouse (String name,List<ProductRecord> list){
+    private Warehouse (String name,List<ProductRecord> list){ // check without list
         this.warehouseName= name;
         this.productRecordList= new ArrayList<>(list);
 
@@ -38,7 +38,7 @@ public class Warehouse {
     public void setWarehouseName(String warehouseName) {
         this.warehouseName = warehouseName;
     }
-    //get instance with and without name
+
     public static Warehouse getInstance(){
          if(instance==null)
              instance = new Warehouse();
@@ -46,7 +46,6 @@ public class Warehouse {
     }
 
     public static Warehouse getInstance(String warehouseName) {
-       /* return new Warehouse();*/
         if (instance == null) {
             instance = new Warehouse(warehouseName, new ArrayList<>());
             } else if (instance.getWarehouseName() == null) {
@@ -56,7 +55,7 @@ public class Warehouse {
 
     }
 
-    //same warehouse name then same warehouse
+
     public static boolean sameWarehouse(Warehouse newWarehouse){
         return Warehouse.getInstance().equals(newWarehouse);
     }
@@ -84,11 +83,18 @@ public class Warehouse {
 
         return productRecord;
     }
+    public  List<ProductRecord> getProductById(UUID id) {
+        return  productRecordList.stream()
+                .filter(product -> product.uuid().equals(id))
+                .collect(Collectors.toList());
+    }
 
 
     public List<ProductRecord> getProducts() {
         return List.of();
     }
+
+
 
     class whenNew{
       private Warehouse warehouse;
@@ -107,39 +113,47 @@ public class Warehouse {
 
 }
 
- class AfterAddingProducts {
+ class AfterAddingProduct {
+     Warehouse warehouse = Warehouse.getInstance();
+     UUID uuid ;
+     String UUID_name;
 
-        public List<ProductRecord> getProductById(UUID id) {
+
+    /*public  List<ProductRecord> getProductById(UUID id) {
          return  productRecordList.stream()
                  .filter(product -> product.uuid().equals(id))
                  .collect(Collectors.toList());
+     }*/
+     public List<ProductRecord> invalidId(){
+         return warehouse.getProductById(UUID.fromString(UUID_name));
      }
 
+}
 
-     public List<ProductRecord> invalidId(UUID Id){
-         return
-     }
-     
-
-
- }
+class AfterAddingMultipleProducts{
+        Warehouse warehouse = getInstance();
+        List<ProductRecord> addedProducts = new ArrayList<>();
 
 
+
+
+        
+}
 
 
     public boolean isEmpty() {
         return false;
     }
 
-   public Object addProduct(UUID uuid, String test, Category test1, Object o) {
-        return o;
-    }
-
     public Object getProductsBy(Category meat) {}
 
     public void updateProductPrice(UUID uuid, BigDecimal bigDecimal) {
     }
+    public boolean getChangedProducts() {
+    }
 
+    public boolean getProductsGroupedByCategories() {
+    }
 
 
 
