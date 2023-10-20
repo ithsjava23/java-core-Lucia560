@@ -1,7 +1,5 @@
 package org.example.warehouse;
 
-import org.example.ProductRecord;
-
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -9,9 +7,9 @@ import java.util.stream.Collectors;
 public class Warehouse {
     //fields
     private String warehouseName;
-    private List<ProductRecord> productRecordList;
+    private List<Category.ProductRecord> productRecordList;
 
-    private List<ProductRecord> changedProductList = new ArrayList<>();
+    private List<Category.ProductRecord> changedProductList = new ArrayList<>();
 
     //constructors
     private static Warehouse instance;
@@ -20,7 +18,7 @@ public class Warehouse {
     private Warehouse() {
     }
 
-    private Warehouse(String name, List<ProductRecord> list) {
+    private Warehouse(String name, List<Category.ProductRecord> list) {
         this.warehouseName = name;
         this.productRecordList = new ArrayList<>(list);
 
@@ -56,7 +54,7 @@ public class Warehouse {
         return Warehouse.getInstance().equals(newWarehouse);
     }
 
-    public List<ProductRecord> getProducts(Warehouse warehouse) {
+    public List<Category.ProductRecord> getProducts(Warehouse warehouse) {
         return warehouse.productRecordList;
     }
 
@@ -65,7 +63,7 @@ public class Warehouse {
     }
 
     // add product
-    public ProductRecord addProduct(UUID uuid, String productName, Category category, BigDecimal price) {
+    public Category.ProductRecord addProduct(UUID uuid, String productName, Category category, BigDecimal price) {
         if (productName == null || productName.isEmpty()) {
             throw new IllegalArgumentException("Product name can't be null or empty.");
         }
@@ -79,7 +77,7 @@ public class Warehouse {
             price = BigDecimal.ZERO;
         }
 
-        ProductRecord productRecord = new ProductRecord(uuid, productName, category, price);
+        Category.ProductRecord productRecord = new Category.ProductRecord(uuid, productName, category, price);
         if (productRecordList.stream().anyMatch(p -> p.uuid().equals(productRecord.uuid()))) {
             throw new IllegalArgumentException("Product with this ID  already exists");
         }
@@ -89,20 +87,20 @@ public class Warehouse {
         return productRecord;
     }
 
-    public Optional<ProductRecord> getProductById(UUID id) {
+    public Optional<Category.ProductRecord> getProductById(UUID id) {
         return productRecordList.stream()
                 .filter(product -> product.uuid().equals(id))
                 .findFirst();
     }
 
-    public List<ProductRecord> getProductsBy(Category category) {
+    public List<Category.ProductRecord> getProductsBy(Category category) {
         return productRecordList.stream()
                 .filter(product -> product.getCategory().equals(category))
                 .collect(Collectors.toList());
     }
 
     // correct
-    public List<ProductRecord> getProducts() {
+    public List<Category.ProductRecord> getProducts() {
         return productRecordList;
     }
 
@@ -113,10 +111,10 @@ public class Warehouse {
     }
 
 
-   public Optional<ProductRecord> updateProductPrice(UUID productId, BigDecimal newPrice) {
-       for (ProductRecord product : productRecordList) {
+   public Optional<Category.ProductRecord> updateProductPrice(UUID productId, BigDecimal newPrice) {
+       for (Category.ProductRecord product : productRecordList) {
            if (product.uuid().equals(productId)) {
-               ProductRecord updatedProduct = new ProductRecord(productId, product.productName(), product.category(), newPrice);
+               Category.ProductRecord updatedProduct = new Category.ProductRecord(productId, product.productName(), product.category(), newPrice);
                changedProductList.add(updatedProduct);
                productRecordList.remove(product);
                productRecordList.add(updatedProduct);
@@ -129,10 +127,10 @@ public class Warehouse {
     public void saveProductChanges() {
         UUID productId = productRecordList.get(0).uuid();
         BigDecimal newPrice = BigDecimal.valueOf(311, 2);
-        Optional<ProductRecord> updatedProduct = updateProductPrice(productId, newPrice);
+        Optional<Category.ProductRecord> updatedProduct = updateProductPrice(productId, newPrice);
 
         if (updatedProduct.isPresent()) {
-            ProductRecord product = updatedProduct.get();
+            Category.ProductRecord product = updatedProduct.get();
             if (!product.price().equals(newPrice)) {
                 throw new AssertionError("Product price was not updated as expected.");
             }
@@ -141,13 +139,13 @@ public class Warehouse {
         }
     }
 
-    public List<ProductRecord> getChangedProducts() {
+    public List<Category.ProductRecord> getChangedProducts() {
         return changedProductList;
     }
 
-    public Map<Category, List<ProductRecord>> getProductsGroupedByCategories() {
+    public Map<Category, List<Category.ProductRecord>> getProductsGroupedByCategories() {
         return productRecordList.stream()
-                .collect(Collectors.groupingBy(ProductRecord::category));
+                .collect(Collectors.groupingBy(Category.ProductRecord::category));
     }
 
 }
