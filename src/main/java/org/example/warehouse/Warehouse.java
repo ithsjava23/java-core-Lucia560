@@ -89,10 +89,10 @@ public class Warehouse {
         return productRecord;
     }
 
-    public List<ProductRecord> getProductById(UUID id) {
+    public Optional<ProductRecord> getProductById(UUID id) {
         return productRecordList.stream()
                 .filter(product -> product.uuid().equals(id))
-                .collect(Collectors.toList());
+                .findFirst();
     }
 
     public List<ProductRecord> getProductsBy(Category category) {
@@ -123,7 +123,7 @@ public class Warehouse {
                return Optional.of(updatedProduct);
            }
        }
-       return Optional.empty(); // Product with that UUID not found.
+       return Optional.empty();
    }
 
     public void saveProductChanges() {
