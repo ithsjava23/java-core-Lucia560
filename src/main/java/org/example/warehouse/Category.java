@@ -19,7 +19,6 @@ public class Category {
         return name;
     }
     public void setName(String name) {
-
         this.name = name;
     }
     public static Category of(String name) {

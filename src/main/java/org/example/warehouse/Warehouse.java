@@ -95,6 +95,12 @@ public class Warehouse {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductRecord> getProductsBy(Category category) {
+        return productRecordList.stream()
+                .filter(product -> product.getCategory().equals(category))
+                .collect(Collectors.toList());
+    }
+
     // correct
     public List<ProductRecord> getProducts() {
         return productRecordList;
@@ -106,42 +112,32 @@ public class Warehouse {
         }
     }
 
-    public List<ProductRecord> getProductsBy(Category category) {
-        return productRecordList.stream()
-                .filter(product -> product.getCategory().equals(category))
-                .collect(Collectors.toList());
-    }
 
+   public Optional<ProductRecord> updateProductPrice(UUID productId, BigDecimal newPrice) {
+       for (ProductRecord product : productRecordList) {
+           if (product.uuid().equals(productId)) {
+               ProductRecord updatedProduct = new ProductRecord(productId, product.productName(), product.category(), newPrice);
+               changedProductList.add(updatedProduct);
+               productRecordList.remove(product);
+               productRecordList.add(updatedProduct);
+               return Optional.of(updatedProduct);
+           }
+       }
+       return Optional.empty(); // Product with that UUID not found.
+   }
 
-    public void updateProductPrice(UUID productId, BigDecimal newPrice) {
-        for (ProductRecord product : productRecordList) {
-            if (product.uuid().equals(productId)) {
-                ProductRecord updatedProduct = new ProductRecord(productId, product.productName(), product.category(), newPrice);
-                changedProductList.add(updatedProduct);
-                productRecordList.remove(product);
-                productRecordList.add(updatedProduct);
-                return;
-            }
-        }
-        throw new IllegalArgumentException("Product with that UUID not found.");
-    }
-
-    public List<ProductRecord> productAfterChange() {
-        UUID productId = changedProductList.get(1).uuid();
+    public void saveProductChanges() {
+        UUID productId = productRecordList.get(0).uuid();
         BigDecimal newPrice = BigDecimal.valueOf(311, 2);
-        updateProductPrice(productId, newPrice);
+        Optional<ProductRecord> updatedProduct = updateProductPrice(productId, newPrice);
 
-        List<ProductRecord> updatedProducts = getProductById(productId);
-        if (updatedProducts.isEmpty()) {
-            throw new RuntimeException("Product with UUID not found: " + productId);
-        }
-
-        ProductRecord updatedProduct = updatedProducts.get(0);
-
-        if (!updatedProduct.price().equals(newPrice)) {
-            throw new RuntimeException("Product price was not updated as expected.");
+        if (updatedProduct.isPresent()) {
+            ProductRecord product = updatedProduct.get();
+            if (!product.price().equals(newPrice)) {
+                throw new AssertionError("Product price was not updated as expected.");
+            }
         } else {
-            throw new RuntimeException("There are not enough changed products to test.");
+            throw new AssertionError("Expected product with ID " + productId + " to be updated.");
         }
     }
 
@@ -153,8 +149,5 @@ public class Warehouse {
         return productRecordList.stream()
                 .collect(Collectors.groupingBy(ProductRecord::category));
     }
-
-
-
 
 }
