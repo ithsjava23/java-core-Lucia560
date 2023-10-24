@@ -72,7 +72,7 @@ public class Warehouse {
 
         ProductRecord productRecord = new ProductRecord(uuid, productName, category, price);
         if (productRecordList.stream().anyMatch(p -> p.uuid().equals(productRecord.uuid()))) {
-            throw new IllegalArgumentException("Product with this ID  already exists");
+            throw new IllegalArgumentException("Product with that id already exists, use updateProduct for updates.");
         }
 
         productRecordList.add(productRecord);
@@ -95,10 +95,10 @@ public class Warehouse {
                 .collect(Collectors.toList());
     }
 
-    // correct
     public List<ProductRecord> getProducts() {
-        return productRecordList;
+        return Collections.unmodifiableList(productRecordList);
     }
+
 
     public void emptyListOfProducts(Warehouse warehouse) {
         if (warehouse.productRecordList == null) {
@@ -107,18 +107,21 @@ public class Warehouse {
     }
 
 
-    public Optional<ProductRecord> updateProductPrice(UUID productId, BigDecimal newPrice) {
-        for (ProductRecord product : productRecordList) {
-            if (product.uuid().equals(productId)) {
-                ProductRecord updatedProduct = new ProductRecord(productId, product.name(), product.category(), newPrice);
-                changedProductList.add(updatedProduct);
-                productRecordList.remove(product);
-                productRecordList.add(updatedProduct);
-                return Optional.of(updatedProduct);
-            }
-        }
-        return Optional.empty();
-    }
+
+  public Optional<ProductRecord> updateProductPrice(UUID productId, BigDecimal newPrice) {
+      ProductRecord existingProduct = productRecordList.stream()
+              .filter(p -> p.uuid().equals(productId))
+              .findFirst()
+              .orElseThrow(() -> new IllegalArgumentException("Product with that id doesn't exist."));
+
+      ProductRecord updatedProduct = new ProductRecord(productId, existingProduct.name(), existingProduct.category(), newPrice);
+      productRecordList.remove(existingProduct);
+      productRecordList.add(updatedProduct);
+      changedProductList.add(updatedProduct);
+
+      return Optional.of(updatedProduct);
+  }
+
 
     public void saveProductChanges() {
         UUID productId = productRecordList.get(0).uuid();
