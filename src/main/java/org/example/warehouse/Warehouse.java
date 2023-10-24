@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class Warehouse {
     //fields
     private String warehouseName;
-    private List<ProductRecord> productRecordList;
+    private List<ProductRecord> productRecordList = new ArrayList<>();
 
     private List<ProductRecord> changedProductList = new ArrayList<>();
 
@@ -19,14 +19,13 @@ public class Warehouse {
     private Warehouse() {
     }
 
-    private Warehouse(String name, List<ProductRecord> list) {
+    private Warehouse(String name) {
         this.warehouseName = name;
-        this.productRecordList = new ArrayList<>(list);
 
     }
 
     // getter and setter
-    public String getWarehouseName() {
+    public String getName() {
         return warehouseName;
     }
 
@@ -36,18 +35,11 @@ public class Warehouse {
 
     // public constructor
     public static Warehouse getInstance() {
-        if (instance == null)
-            instance = new Warehouse();
-        return instance;
+   return new Warehouse();
     }
 
     public static Warehouse getInstance(String warehouseName) {
-        if (instance == null) {
-            instance = new Warehouse(warehouseName, new ArrayList<>());
-        } else if (instance.getWarehouseName() == null) {
-            instance.setWarehouseName(warehouseName);
-        }
-        return instance;
+        return new Warehouse(warehouseName);
 
     }
 
@@ -88,6 +80,9 @@ public class Warehouse {
         return productRecord;
     }
 
+
+
+
     public Optional<ProductRecord> getProductById(UUID id) {
         return productRecordList.stream()
                 .filter(product -> product.uuid().equals(id))
@@ -96,7 +91,7 @@ public class Warehouse {
 
     public List<ProductRecord> getProductsBy(Category category) {
         return productRecordList.stream()
-                .filter(product -> product.getCategory().equals(category))
+                .filter(product -> product.category().equals(category))
                 .collect(Collectors.toList());
     }
 
@@ -115,7 +110,7 @@ public class Warehouse {
     public Optional<ProductRecord> updateProductPrice(UUID productId, BigDecimal newPrice) {
         for (ProductRecord product : productRecordList) {
             if (product.uuid().equals(productId)) {
-                ProductRecord updatedProduct = new ProductRecord(productId, product.productName(), product.category(), newPrice);
+                ProductRecord updatedProduct = new ProductRecord(productId, product.name(), product.category(), newPrice);
                 changedProductList.add(updatedProduct);
                 productRecordList.remove(product);
                 productRecordList.add(updatedProduct);
