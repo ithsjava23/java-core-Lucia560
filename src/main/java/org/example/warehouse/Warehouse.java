@@ -69,19 +69,14 @@ public class Warehouse {
         if (price == null) {
             price = BigDecimal.ZERO;
         }
-
-        ProductRecord productRecord = new ProductRecord(uuid, productName, category, price);
-        if (productRecordList.stream().anyMatch(p -> p.uuid().equals(productRecord.uuid()))) {
+        if(getProductById(uuid).isPresent()){
             throw new IllegalArgumentException("Product with that id already exists, use updateProduct for updates.");
         }
 
+        ProductRecord productRecord = new ProductRecord(uuid, productName, category, price);
         productRecordList.add(productRecord);
-
         return productRecord;
     }
-
-
-
 
     public Optional<ProductRecord> getProductById(UUID id) {
         return productRecordList.stream()
@@ -107,20 +102,22 @@ public class Warehouse {
     }
 
 
+    public Optional<ProductRecord> updateProductPrice(UUID productId, BigDecimal newPrice) {
+        ProductRecord existingProduct = productRecordList.stream()
+                .filter(p -> p.uuid().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Product with that id doesn't exist."));
 
-  public Optional<ProductRecord> updateProductPrice(UUID productId, BigDecimal newPrice) {
-      ProductRecord existingProduct = productRecordList.stream()
-              .filter(p -> p.uuid().equals(productId))
-              .findFirst()
-              .orElseThrow(() -> new IllegalArgumentException("Product with that id doesn't exist."));
+        changedProductList.add(existingProduct);
 
-      ProductRecord updatedProduct = new ProductRecord(productId, existingProduct.name(), existingProduct.category(), newPrice);
-      productRecordList.remove(existingProduct);
-      productRecordList.add(updatedProduct);
-      changedProductList.add(updatedProduct);
+        ProductRecord updatedProduct = new ProductRecord(productId, existingProduct.name(), existingProduct.category(), newPrice);
+        productRecordList.remove(existingProduct);
+        productRecordList.add(updatedProduct);
 
-      return Optional.of(updatedProduct);
-  }
+        return Optional.of(updatedProduct);
+    }
+
+
 
 
     public void saveProductChanges() {
@@ -139,10 +136,10 @@ public class Warehouse {
     }
 
     public List<ProductRecord> getChangedProducts() {
-        return changedProductList;
+        return List.copyOf(changedProductList);
     }
 
-    public Map<Category, List<ProductRecord>> getProductsGroupedByCategories() {
+   public Map<Category, List<ProductRecord>> getProductsGroupedByCategories() {
         return productRecordList.stream()
                 .collect(Collectors.groupingBy(ProductRecord::category));
     }
