@@ -118,8 +118,6 @@ public class Warehouse {
     }
 
 
-
-
     public void saveProductChanges() {
         UUID productId = productRecordList.get(0).uuid();
         BigDecimal newPrice = BigDecimal.valueOf(311, 2);
