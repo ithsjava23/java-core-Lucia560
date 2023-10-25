@@ -1,10 +1,13 @@
 package org.example.warehouse;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Category {
+    private static final Map<String, Category> categoryCache = new HashMap<>();
 
     private  String name;
 
@@ -24,12 +27,15 @@ public class Category {
         this.name = name;
     }
     public static Category of(String name) {
-        return new Category(name);
+        if (name == null){
+            throw new IllegalArgumentException("Category name can't be null");}
+        return categoryCache.computeIfAbsent(name, Category::new);
     }
 
     public boolean sameName(Category newCategory) {
-            return this.name.equals(newCategory.getName());
-        }
+        return this.name.equals(newCategory.getName());
+
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,14 +48,6 @@ public class Category {
     public int hashCode() {
         return Objects.hash(name);
     }
-
-
-
-
-
-
-
-
 
 
 }
