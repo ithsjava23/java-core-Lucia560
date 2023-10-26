@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @DisplayName("A warehouse")
@@ -218,7 +218,8 @@ class WarehouseTest {
         @DisplayName("find changed products returns product")
         void andChangingOneFindChangedProductsShouldReturnThatProduct() {
             warehouse.updateProductPrice(addedProducts.get(1).uuid(), BigDecimal.valueOf(311, 2));
-            assertThat(warehouse.getChangedProducts()).containsOnly(addedProducts.get(1));
+            assertThat(warehouse.
+                    getChangedProducts()).containsOnly(addedProducts.get(1));
         }
 
         @Test
